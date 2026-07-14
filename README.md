@@ -44,9 +44,10 @@ The equivalent environment switches are `DOTFILES_SKIP_PACKAGES=1`,
 ## What is installed
 
 On macOS, packages come from Homebrew. On Ubuntu, base packages come from APT,
-while current Neovim, lazygit, Tree-sitter CLI, bottom, and gdu binaries are
-installed under `~/.local` from their official release artifacts. This avoids
-Ubuntu 22.04's old Neovim package.
+while Neovim, lazygit, an Ubuntu-compatible Tree-sitter CLI, bottom, and gdu
+binaries are installed under `~/.local` from their official release artifacts.
+This avoids Ubuntu 22.04's old Neovim package and incompatible newer
+Tree-sitter binaries.
 
 - Neovim stable (AstroNvim currently requires 0.11 or newer)
 - tmux with `taj-p/.tmux` (Oh My Tmux plus the committed local settings)
@@ -101,6 +102,8 @@ These are mainly useful for testing or forks:
 - `TMUX_CONFIG_BRANCH` (default `master`)
 - `TMUX_REPO_DIR` (default `${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux`)
 - `TMUX_CONFIG_DIR` (default `${XDG_CONFIG_HOME:-$HOME/.config}/tmux`)
+- `TREE_SITTER_CLI_VERSION` on Ubuntu (default `0.25.10`, compatible with
+  Ubuntu 22.04's glibc 2.35)
 
 ## Notes
 

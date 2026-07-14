@@ -81,11 +81,17 @@ curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/${lazygit
 tar -xzf "$tmp/lazygit.tar.gz" -C "$tmp" lazygit
 install -m 0755 "$tmp/lazygit" "$HOME/.local/bin/lazygit"
 
-treesitter_tag=$(latest_release_tag tree-sitter/tree-sitter)
-log "Installing Tree-sitter CLI $treesitter_tag"
-curl -fsSL "https://github.com/tree-sitter/tree-sitter/releases/download/${treesitter_tag}/tree-sitter-cli-linux-${ts_arch}.zip" -o "$tmp/tree-sitter.zip"
-unzip -oq "$tmp/tree-sitter.zip" -d "$tmp/tree-sitter"
-install -m 0755 "$tmp/tree-sitter/tree-sitter" "$HOME/.local/bin/tree-sitter"
+# Newer upstream Linux binaries require glibc 2.39, while Ubuntu 22.04 ships
+# glibc 2.35. v0.25.10 requires only glibc 2.34 on x86-64 (and 2.29 on ARM64)
+# and provides the CLI features required by nvim-treesitter.
+treesitter_version=${TREE_SITTER_CLI_VERSION:-0.25.10}
+log "Installing Ubuntu-compatible Tree-sitter CLI v$treesitter_version"
+curl -fsSL "https://github.com/tree-sitter/tree-sitter/releases/download/v${treesitter_version}/tree-sitter-linux-${ts_arch}.gz" -o "$tmp/tree-sitter.gz"
+gunzip -c "$tmp/tree-sitter.gz" >"$tmp/tree-sitter"
+install -m 0755 "$tmp/tree-sitter" "$HOME/.local/bin/tree-sitter"
+if ! "$HOME/.local/bin/tree-sitter" --version >/dev/null 2>&1; then
+  die "The installed Tree-sitter CLI cannot run on this system. Set TREE_SITTER_CLI_VERSION to another compatible release and rerun."
+fi
 
 bottom_tag=$(latest_release_tag ClementTsang/bottom)
 log "Installing bottom $bottom_tag"
