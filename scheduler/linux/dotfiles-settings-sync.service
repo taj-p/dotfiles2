@@ -1,0 +1,8 @@
+[Unit]
+Description=Fast-forward taj-p development settings
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/dotfiles-sync-settings
+
