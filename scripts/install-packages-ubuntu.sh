@@ -16,8 +16,25 @@ fi
 log "Installing Ubuntu base packages"
 "${SUDO[@]}" apt-get update
 DEBIAN_FRONTEND=noninteractive "${SUDO[@]}" apt-get install -y \
-  build-essential ca-certificates curl fd-find git golang-go nodejs npm \
+  build-essential ca-certificates curl fd-find git golang-go \
   perl python3 python3-pip python3-venv ripgrep tmux unzip xclip
+
+# NodeSource's nodejs package bundles npm and declares a conflict with
+# Ubuntu's separate npm package. Install them independently so this also works
+# on an unmodified Ubuntu 22.04 system, where npm is a separate package.
+if ! command -v node >/dev/null 2>&1; then
+  log "Installing Node.js"
+  DEBIAN_FRONTEND=noninteractive "${SUDO[@]}" apt-get install -y nodejs
+fi
+if ! command -v npm >/dev/null 2>&1; then
+  node_candidate=$(apt-cache policy nodejs | awk '/Candidate:/ { print $2; exit }')
+  if [[ -n $node_candidate && $node_candidate != '(none)' ]] \
+    && apt-cache show "nodejs=$node_candidate" 2>/dev/null | grep -qi '^Conflicts:.*npm'; then
+    die "The installed NodeSource nodejs package conflicts with Ubuntu npm but did not provide the npm command. Repair the NodeSource installation, then rerun this installer."
+  fi
+  log "Installing Ubuntu's separate npm package"
+  DEBIAN_FRONTEND=noninteractive "${SUDO[@]}" apt-get install -y npm
+fi
 
 install -d "$HOME/.local/bin" "$HOME/.local/share"
 if command -v fdfind >/dev/null 2>&1; then
