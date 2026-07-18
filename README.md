@@ -10,7 +10,8 @@ AstroNvim terminal tools, and
 [`taj-p/nvim_config`](https://github.com/taj-p/nvim_config). The Neovim config
 is checked for fast-forward updates every 10 minutes. It also installs tmux and
 the settings from `git@github.com:taj-p/.tmux.git`, which are updated on the
-same schedule.
+same schedule. The dotfiles checkout itself is also fast-forwarded on that
+schedule, and updates are applied automatically with a lightweight reinstall.
 
 ## Install
 
@@ -64,19 +65,21 @@ The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 `nvim` through a small managed fragment sourced by both Bash and Zsh. It also
 provides `lg` as a short alias for `lazygit`.
 
-## Settings updates
+## Automatic updates
 
-The command `dotfiles-sync-settings` updates both Neovim and tmux. The
-individual commands are `dotfiles-sync-nvim` and `dotfiles-sync-tmux`. Updates
-use `git fetch` and `git merge --ff-only`, so they never reset, overwrite, or
-delete local changes.
+The command `dotfiles-sync-settings` updates this dotfiles checkout, Neovim,
+and tmux. The individual commands are `dotfiles-sync-repo`,
+`dotfiles-sync-nvim`, and `dotfiles-sync-tmux`. Updates use `git fetch` and
+`git merge --ff-only`, so they never reset, overwrite, or delete local changes.
+When the dotfiles checkout advances, the updater reruns `install.sh` without
+package upgrades, Neovim initialization, or scheduler restarts.
 
 The tmux checkout is stored at `~/.local/share/tmux/oh-my-tmux`. Both
 `~/.config/tmux/tmux.conf` and `tmux.conf.local` are symlinked to the committed
 files in that checkout. When a scheduled pull changes the tmux commit, a
 running tmux server is reloaded automatically.
 
-- macOS: a LaunchAgent updates both settings repositories every 600 seconds.
+- macOS: a LaunchAgent runs the combined updater every 600 seconds.
 - Ubuntu with a user systemd session: a user timer runs every 10 minutes.
 - Coder/container environments without user systemd: a lightweight per-user
   loop is started by the bootstrap and by the shell profile as a restart

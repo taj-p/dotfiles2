@@ -49,17 +49,19 @@ if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
   else
     "$ROOT_DIR/scripts/install-packages-ubuntu.sh"
   fi
-  install_gh_dash
 else
   log "Skipping package installation"
 fi
+install_gh_dash
 
 install -d "$HOME/.local/bin" "$HOME/.local/state/taj-dotfiles" "$HOME/.config/taj-dotfiles"
+install -m 0755 "$ROOT_DIR/scripts/sync-dotfiles.sh" "$HOME/.local/bin/dotfiles-sync-repo"
 install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync-nvim"
 install -m 0755 "$ROOT_DIR/scripts/sync-tmux.sh" "$HOME/.local/bin/dotfiles-sync-tmux"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings.sh" "$HOME/.local/bin/dotfiles-sync-settings"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings-loop.sh" "$HOME/.local/bin/dotfiles-settings-sync-loop"
 install -m 0644 "$ROOT_DIR/shell/profile.sh" "$HOME/.config/taj-dotfiles/profile.sh"
+printf '%s\n' "$ROOT_DIR" >"$HOME/.config/taj-dotfiles/repo-dir"
 
 source_line='[ -r "$HOME/.config/taj-dotfiles/profile.sh" ] && . "$HOME/.config/taj-dotfiles/profile.sh"'
 ensure_line "$HOME/.bashrc" "$source_line"
@@ -70,16 +72,18 @@ if [[ $OS == macos ]]; then
 else
   export PATH="$HOME/.local/bin:$PATH"
 fi
-prepare_nvim_config_dir
-prepare_tmux_config
-NVIM_CONFIG_REPO="${NVIM_CONFIG_REPO:-https://github.com/taj-p/nvim_config.git}" \
-  NVIM_CONFIG_BRANCH="${NVIM_CONFIG_BRANCH:-main}" \
-  NVIM_CONFIG_DIR="${NVIM_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/nvim}" \
-  TMUX_CONFIG_REPO="${TMUX_CONFIG_REPO:-git@github.com:taj-p/.tmux.git}" \
-  TMUX_CONFIG_BRANCH="${TMUX_CONFIG_BRANCH:-master}" \
-  TMUX_REPO_DIR="${TMUX_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux}" \
-  TMUX_CONFIG_DIR="${TMUX_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/tmux}" \
-  "$HOME/.local/bin/dotfiles-sync-settings"
+if [[ ${DOTFILES_SELF_UPDATE:-0} != 1 ]]; then
+  prepare_nvim_config_dir
+  prepare_tmux_config
+  NVIM_CONFIG_REPO="${NVIM_CONFIG_REPO:-https://github.com/taj-p/nvim_config.git}" \
+    NVIM_CONFIG_BRANCH="${NVIM_CONFIG_BRANCH:-main}" \
+    NVIM_CONFIG_DIR="${NVIM_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/nvim}" \
+    TMUX_CONFIG_REPO="${TMUX_CONFIG_REPO:-git@github.com:taj-p/.tmux.git}" \
+    TMUX_CONFIG_BRANCH="${TMUX_CONFIG_BRANCH:-master}" \
+    TMUX_REPO_DIR="${TMUX_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux}" \
+    TMUX_CONFIG_DIR="${TMUX_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/tmux}" \
+    "$HOME/.local/bin/dotfiles-sync-settings"
+fi
 
 if [[ ${DOTFILES_NO_SCHEDULER:-0} != 1 ]]; then
   if [[ $OS == macos ]]; then
@@ -98,6 +102,10 @@ if [[ ${DOTFILES_SKIP_NVIM_INIT:-0} != 1 ]]; then
   else
     warn "nvim is not on PATH, so AstroNvim initialization was skipped."
   fi
+fi
+
+if git -C "$ROOT_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  git -C "$ROOT_DIR" rev-parse HEAD >"$HOME/.local/state/taj-dotfiles/repo-applied-revision"
 fi
 
 log "Done. Open a new shell, then run 'nvim' or 'tmux'."
