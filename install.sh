@@ -49,6 +49,7 @@ if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
   else
     "$ROOT_DIR/scripts/install-packages-ubuntu.sh"
   fi
+  install_gh_dash
 else
   log "Skipping package installation"
 fi

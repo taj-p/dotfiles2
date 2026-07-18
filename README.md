@@ -56,11 +56,13 @@ Tree-sitter binaries.
 - Git, curl, unzip, and a system clipboard provider
 - Node.js, npm, Python, and Go for LSPs and AstroNvim terminal integrations
 - bottom (`btm`) and go DiskUsage (`gdu`)
+- `gh-dash`, installed as a GitHub CLI extension when `gh` is available
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
 
 The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
-`nvim` through a small managed fragment sourced by both Bash and Zsh.
+`nvim` through a small managed fragment sourced by both Bash and Zsh. It also
+provides `lg` as a short alias for `lazygit`.
 
 ## Settings updates
 

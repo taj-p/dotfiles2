@@ -16,6 +16,16 @@ latest_release_tag() {
   printf '%s\n' "${url##*/}"
 }
 
+install_gh_dash() {
+  if ! command -v gh >/dev/null 2>&1; then
+    warn "GitHub CLI is not on PATH, so the gh-dash extension was not installed."
+    return 0
+  fi
+
+  log "Installing the gh-dash GitHub CLI extension"
+  gh extension install dlvhdr/gh-dash --force
+}
+
 backup_path() {
   local path=$1 stamp backup counter
   [[ -e $path || -L $path ]] || return 0

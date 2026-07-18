@@ -15,6 +15,8 @@ esac
 export EDITOR=nvim
 export VISUAL=nvim
 
+alias lg='lazygit'
+
 # Coder containers often have no user systemd session. Keep exactly one small
 # updater loop alive as a fallback; the loop uses a per-user directory lock.
 if [ "$(uname -s 2>/dev/null)" = Linux ] && [ -x "$HOME/.local/bin/dotfiles-settings-sync-loop" ]; then
