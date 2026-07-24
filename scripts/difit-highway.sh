@@ -2,11 +2,15 @@
 
 set -uo pipefail
 
-route=${DIFIT_HIGHWAY_ROUTE:-taj-sense-lawn}
 difit_pid=
+highway_pid=
 connection_file=
 
 cleanup() {
+  if [[ -n $highway_pid ]] && kill -0 "$highway_pid" >/dev/null 2>&1; then
+    kill "$highway_pid" >/dev/null 2>&1 || true
+    wait "$highway_pid" 2>/dev/null || true
+  fi
   if [[ -n $difit_pid ]] && kill -0 "$difit_pid" >/dev/null 2>&1; then
     kill "$difit_pid" >/dev/null 2>&1 || true
     wait "$difit_pid" 2>/dev/null || true
@@ -34,8 +38,15 @@ for arg in "$@"; do
   fi
 done
 
+difit_args=("$@")
+if [[ ${1:-} =~ ^https://github\.com/[^/]+/[^/]+/pull/[0-9]+(/changes)?/?$ ]]; then
+  pr_url=${1%/}
+  pr_url=${pr_url%/changes}
+  difit_args=(--pr "$pr_url" "${@:2}")
+fi
+
 connection_file=$(mktemp "${TMPDIR:-/tmp}/difit-highway.XXXXXX")
-difit "$@" --no-open --keep-alive --host 127.0.0.1 >"$connection_file" 2>&1 &
+difit "${difit_args[@]}" --no-open --keep-alive --host 127.0.0.1 >"$connection_file" 2>&1 &
 difit_pid=$!
 
 attempt=0
@@ -59,6 +70,11 @@ while [[ -z $difit_port ]]; do
 done
 
 cat "$connection_file"
-printf 'difit-highway: https://%s.highway.canva-internal.dev -> localhost:%s\n' \
-  "$route" "$difit_port"
-infra highway run --route "$route" --port "$difit_port"
+printf 'difit-highway: starting the cached Highway tunnel for localhost:%s\n' \
+  "$difit_port"
+infra highway http "$difit_port" &
+highway_pid=$!
+wait "$highway_pid"
+highway_status=$?
+highway_pid=
+exit "$highway_status"

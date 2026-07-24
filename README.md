@@ -67,16 +67,19 @@ The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 provides `lg` as a short alias for `lazygit`.
 
 The `dfh` command starts difit in the background, passes through any difit
-arguments, and connects it to the stable
-`https://taj-sense-lawn.highway.canva-internal.dev` Highway route. For example:
+arguments, and connects it through `infra highway http`. Highway's tunnel cache
+reuses the same hostname so difit's browser-local state remains available
+between runs. For example:
 
 ```sh
 dfh working --include-untracked
 dfh HEAD~3
+dfh https://github.com/Canva/canva/pull/123456
 ```
 
-The stable hostname preserves difit's browser-local state between runs. Set
-`DIFIT_HIGHWAY_ROUTE` to use a different existing Highway route.
+GitHub pull-request URLs are automatically passed to difit's `--pr` option;
+both the main PR URL and its `/changes` URL are accepted. Pressing Ctrl+C stops
+both the Highway tunnel and the local difit server.
 
 ## Automatic updates
 
