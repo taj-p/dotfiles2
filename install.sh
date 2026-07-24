@@ -68,8 +68,6 @@ if [[ $install_difit == 1 ]]; then
   npm install --global --prefix "$HOME/.local" difit
 fi
 
-install_gh_dash
-
 install -d "$HOME/.local/bin" "$HOME/.local/state/taj-dotfiles" "$HOME/.config/taj-dotfiles"
 install -m 0755 "$ROOT_DIR/scripts/sync-dotfiles.sh" "$HOME/.local/bin/dotfiles-sync-repo"
 install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync-nvim"
@@ -80,6 +78,10 @@ install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/difit-hig
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/dfh"
 install -m 0644 "$ROOT_DIR/shell/profile.sh" "$HOME/.config/taj-dotfiles/profile.sh"
 printf '%s\n' "$ROOT_DIR" >"$HOME/.config/taj-dotfiles/repo-dir"
+
+if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
+  install_gh_dash
+fi
 
 source_line='[ -r "$HOME/.config/taj-dotfiles/profile.sh" ] && . "$HOME/.config/taj-dotfiles/profile.sh"'
 ensure_line "$HOME/.bashrc" "$source_line"

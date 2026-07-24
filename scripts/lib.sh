@@ -23,7 +23,9 @@ install_gh_dash() {
   fi
 
   log "Installing the gh-dash GitHub CLI extension"
-  gh extension install dlvhdr/gh-dash --force
+  if ! gh extension install dlvhdr/gh-dash --force; then
+    warn "gh-dash installation failed; the rest of the dotfiles installation will continue."
+  fi
 }
 
 backup_path() {
