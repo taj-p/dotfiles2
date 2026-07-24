@@ -57,6 +57,7 @@ Tree-sitter binaries.
 - Git, curl, unzip, and a system clipboard provider
 - Node.js, npm, Python, and Go for LSPs and AstroNvim terminal integrations
 - bottom (`btm`) and go DiskUsage (`gdu`)
+- `difit`, installed with npm under `~/.local`
 - `gh-dash`, installed as a GitHub CLI extension when `gh` is available
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
@@ -64,6 +65,18 @@ Tree-sitter binaries.
 The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 `nvim` through a small managed fragment sourced by both Bash and Zsh. It also
 provides `lg` as a short alias for `lazygit`.
+
+`dfh` starts difit in the background, passes through any difit arguments, and
+connects it to the stable
+`https://taj-sense-lawn.highway.canva-internal.dev` Highway route. For example:
+
+```sh
+dfh working --include-untracked
+dfh HEAD~3
+```
+
+The stable hostname preserves difit's browser-local state between runs. Set
+`DIFIT_HIGHWAY_ROUTE` to use a different existing Highway route.
 
 ## Automatic updates
 

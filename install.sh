@@ -49,9 +49,15 @@ if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
   else
     "$ROOT_DIR/scripts/install-packages-ubuntu.sh"
   fi
+  if ! command -v npm >/dev/null 2>&1; then
+    die "npm is required to install difit."
+  fi
+  log "Installing difit with npm"
+  npm install --global --prefix "$HOME/.local" difit
 else
   log "Skipping package installation"
 fi
+
 install_gh_dash
 
 install -d "$HOME/.local/bin" "$HOME/.local/state/taj-dotfiles" "$HOME/.config/taj-dotfiles"
@@ -60,6 +66,7 @@ install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync
 install -m 0755 "$ROOT_DIR/scripts/sync-tmux.sh" "$HOME/.local/bin/dotfiles-sync-tmux"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings.sh" "$HOME/.local/bin/dotfiles-sync-settings"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings-loop.sh" "$HOME/.local/bin/dotfiles-settings-sync-loop"
+install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/difit-highway"
 install -m 0644 "$ROOT_DIR/shell/profile.sh" "$HOME/.config/taj-dotfiles/profile.sh"
 printf '%s\n' "$ROOT_DIR" >"$HOME/.config/taj-dotfiles/repo-dir"
 

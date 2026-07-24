@@ -16,6 +16,7 @@ export EDITOR=nvim
 export VISUAL=nvim
 
 alias lg='lazygit'
+alias dfh='difit-highway'
 
 # Coder containers often have no user systemd session. Keep exactly one small
 # updater loop alive as a fallback; the loop uses a per-user directory lock.
