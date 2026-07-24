@@ -66,8 +66,8 @@ The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 `nvim` through a small managed fragment sourced by both Bash and Zsh. It also
 provides `lg` as a short alias for `lazygit`.
 
-`dfh` starts difit in the background, passes through any difit arguments, and
-connects it to the stable
+The `dfh` command starts difit in the background, passes through any difit
+arguments, and connects it to the stable
 `https://taj-sense-lawn.highway.canva-internal.dev` Highway route. For example:
 
 ```sh
