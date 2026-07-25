@@ -66,6 +66,9 @@ The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 `nvim` through a small managed fragment sourced by both Bash and Zsh. It also
 provides `lg` as a short alias for `lazygit`.
 
+Run `dotfiles-packages` for a quick reminder of every managed package, its
+command name, and what it is used for.
+
 The `dfh` command starts difit in the background, passes through any difit
 arguments, and connects it through `infra highway http`. Highway's tunnel cache
 reuses the same hostname so difit's browser-local state remains available

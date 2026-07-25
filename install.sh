@@ -76,6 +76,7 @@ install -m 0755 "$ROOT_DIR/scripts/sync-settings.sh" "$HOME/.local/bin/dotfiles-
 install -m 0755 "$ROOT_DIR/scripts/sync-settings-loop.sh" "$HOME/.local/bin/dotfiles-settings-sync-loop"
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/difit-highway"
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/dfh"
+install -m 0755 "$ROOT_DIR/scripts/list-packages.sh" "$HOME/.local/bin/dotfiles-packages"
 install -m 0644 "$ROOT_DIR/shell/profile.sh" "$HOME/.config/taj-dotfiles/profile.sh"
 printf '%s\n' "$ROOT_DIR" >"$HOME/.config/taj-dotfiles/repo-dir"
 
