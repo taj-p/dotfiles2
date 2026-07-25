@@ -16,6 +16,7 @@ export EDITOR=nvim
 export VISUAL=nvim
 
 alias lg='lazygit'
+alias g='git'
 alias ls='lsd'
 
 if command -v zoxide >/dev/null 2>&1; then
