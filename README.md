@@ -58,13 +58,15 @@ Tree-sitter binaries.
 - Node.js, npm, Python, and Go for LSPs and AstroNvim terminal integrations
 - bottom (`btm`) and go DiskUsage (`gdu`)
 - `difit`, installed with npm under `~/.local`
+- zoxide (`z`), lsd (`ls`), and bat
 - `gh-dash`, installed as a GitHub CLI extension when `gh` is available
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
 
 The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 `nvim` through a small managed fragment sourced by both Bash and Zsh. It also
-provides `lg` as a short alias for `lazygit`.
+provides `lg` as a short alias for `lazygit`, initializes zoxide as `z`, and
+aliases `ls` to `lsd`.
 
 Run `dotfiles-packages` for a quick reminder of every managed package, its
 command name, and what it is used for.

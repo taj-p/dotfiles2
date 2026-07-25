@@ -68,6 +68,27 @@ if [[ $install_difit == 1 ]]; then
   npm install --global --prefix "$HOME/.local" difit
 fi
 
+has_shell_tool() {
+  command -v "$1" >/dev/null 2>&1 \
+    || [[ -x "$HOME/.local/bin/$1" ]] \
+    || [[ -x "/opt/homebrew/bin/$1" ]] \
+    || [[ -x "/usr/local/bin/$1" ]]
+}
+
+install_shell_tools=0
+if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
+  install_shell_tools=1
+elif [[ ${DOTFILES_SELF_UPDATE:-0} == 1 ]] \
+  && { ! has_shell_tool zoxide \
+    || ! has_shell_tool lsd \
+    || ! has_shell_tool bat; }; then
+  log "Modern shell tools are missing; installing them during the dotfiles update"
+  install_shell_tools=1
+fi
+if [[ $install_shell_tools == 1 ]]; then
+  "$ROOT_DIR/scripts/install-shell-tools.sh"
+fi
+
 install -d "$HOME/.local/bin" "$HOME/.local/state/taj-dotfiles" "$HOME/.config/taj-dotfiles"
 install -m 0755 "$ROOT_DIR/scripts/sync-dotfiles.sh" "$HOME/.local/bin/dotfiles-sync-repo"
 install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync-nvim"

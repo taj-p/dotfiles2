@@ -35,6 +35,9 @@ row "Perl (perl)" "Runtime required by development utilities."
 row "bottom (btm)" "Interactive system and process monitor."
 row "go DiskUsage (gdu)" "Fast interactive disk-usage analyzer."
 row "difit (difit)" "Browser-based Git diff and PR viewer."
+row "zoxide (zoxide, z)" "Smarter directory jumping based on usage history."
+row "lsd (lsd, ls)" "Modern directory listing with colors and icons."
+row "bat (bat)" "Syntax-highlighted file viewer and cat replacement."
 
 if [[ $os == Darwin ]]; then
   section "macOS additions"

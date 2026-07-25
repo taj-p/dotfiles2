@@ -16,6 +16,15 @@ export EDITOR=nvim
 export VISUAL=nvim
 
 alias lg='lazygit'
+alias ls='lsd'
+
+if command -v zoxide >/dev/null 2>&1; then
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    eval "$(zoxide init zsh --cmd z)"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    eval "$(zoxide init bash --cmd z)"
+  fi
+fi
 
 # Coder containers often have no user systemd session. Keep exactly one small
 # updater loop alive as a fallback; the loop uses a per-user directory lock.
