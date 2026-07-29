@@ -71,6 +71,9 @@ zoxide as `z`, and aliases `ls` to `lsd`.
 Run `dotfiles-packages` for a quick reminder of every managed package, its
 command name, and what it is used for.
 
+Use `qco <remote-ref>` for a quick detached checkout. It runs
+`git fetch origin <remote-ref>` followed by `git checkout FETCH_HEAD`.
+
 The `dfh` command starts difit in the background, passes through any difit
 arguments, and connects it through `infra highway http`. Highway's tunnel cache
 reuses the same hostname so difit's browser-local state remains available

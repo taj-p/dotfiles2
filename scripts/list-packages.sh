@@ -59,6 +59,7 @@ row "gh-dash (gh dash)" "GitHub dashboard; installed when GitHub CLI is present.
 
 section "Dotfiles commands"
 row "g [git arguments]" "Short alias for git."
+row "qco <remote-ref>" "Fetch a ref from origin and check out FETCH_HEAD."
 row "dfh [difit arguments]" "Run difit through a reusable Highway tunnel."
 row "difit-highway" "Long form of dfh."
 row "dotfiles-packages" "Show this package and command reminder."
