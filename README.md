@@ -74,6 +74,20 @@ command name, and what it is used for.
 Use `qco <remote-ref>` for a quick detached checkout. It runs
 `git fetch origin <remote-ref>` followed by `git checkout FETCH_HEAD`.
 
+Use `crh` before pushing a commit to have Codex review defects introduced by
+`HEAD` while using the full pull-request diff for context. It discovers the
+base branch from the current GitHub pull request when possible, then falls back
+to the origin default branch. Pass a base explicitly when needed:
+
+```sh
+crh
+crh main
+```
+
+The long command name is `codex-review-head`. It requires an authenticated
+Codex CLI. GitHub CLI authentication is optional, but lets `crh` discover the
+base branch of an existing pull request.
+
 The `dfh` command starts difit in the background, passes through any difit
 arguments, and connects it through `infra highway http`. Highway's tunnel cache
 reuses the same hostname so difit's browser-local state remains available
