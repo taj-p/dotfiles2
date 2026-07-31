@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-repo=${LLM_WATCH_REPO:-git@github.com:taj-p/llm-watch.git}
+repo=${LLM_WATCH_REPO:-https://github.com/taj-p/llm-watch.git}
 branch=${LLM_WATCH_BRANCH:-main}
 repo_dir=${LLM_WATCH_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch}
 state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/taj-dotfiles

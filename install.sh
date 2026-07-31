@@ -136,7 +136,7 @@ if [[ ${DOTFILES_SELF_UPDATE:-0} != 1 ]]; then
     TMUX_CONFIG_BRANCH="${TMUX_CONFIG_BRANCH:-master}" \
     TMUX_REPO_DIR="${TMUX_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux}" \
     TMUX_CONFIG_DIR="${TMUX_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/tmux}" \
-    LLM_WATCH_REPO="${LLM_WATCH_REPO:-git@github.com:taj-p/llm-watch.git}" \
+    LLM_WATCH_REPO="${LLM_WATCH_REPO:-https://github.com/taj-p/llm-watch.git}" \
     LLM_WATCH_BRANCH="${LLM_WATCH_BRANCH:-main}" \
     LLM_WATCH_REPO_DIR="${LLM_WATCH_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch}" \
     "$HOME/.local/bin/dotfiles-sync-settings"

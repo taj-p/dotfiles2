@@ -170,7 +170,7 @@ These are mainly useful for testing or forks:
 - `TMUX_CONFIG_BRANCH` (default `master`)
 - `TMUX_REPO_DIR` (default `${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux`)
 - `TMUX_CONFIG_DIR` (default `${XDG_CONFIG_HOME:-$HOME/.config}/tmux`)
-- `LLM_WATCH_REPO` (default `git@github.com:taj-p/llm-watch.git`)
+- `LLM_WATCH_REPO` (default `https://github.com/taj-p/llm-watch.git`)
 - `LLM_WATCH_BRANCH` (default `main`)
 - `LLM_WATCH_REPO_DIR` (default
   `${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch`)
@@ -186,6 +186,6 @@ These are mainly useful for testing or forks:
   Remote Ubuntu/Coder machines do not need the font installed.
 - Initial Neovim startup downloads AstroNvim plugins and Mason packages, so it
   requires network access.
-- The tmux and llm-watch repositories use their SSH URLs. The Mac or Coder
-  workspace therefore needs GitHub SSH access for installation and scheduled
-  updates.
+- The tmux repository uses its SSH URL, so the Mac or Coder workspace needs
+  GitHub SSH access for its installation and scheduled updates. The public
+  llm-watch repository uses HTTPS and does not require GitHub credentials.
