@@ -27,7 +27,12 @@ if ! mkdir "$lock_dir" 2>/dev/null; then
   mkdir "$lock_dir" 2>/dev/null || exit 0
 fi
 printf '%s\n' "$$" >"$lock_dir/pid"
-cleanup() { rm -f "$lock_dir/pid"; rmdir "$lock_dir" 2>/dev/null || true; }
+rustup_installer=
+cleanup() {
+  if [[ -n $rustup_installer ]]; then rm -f "$rustup_installer"; fi
+  rm -f "$lock_dir/pid"
+  rmdir "$lock_dir" 2>/dev/null || true
+}
 trap cleanup EXIT
 
 mkdir -p "$(dirname "$repo_dir")" "$HOME/.local/bin" "$state_dir"
@@ -44,7 +49,48 @@ else
   git -C "$repo_dir" merge --ff-only --quiet "origin/$branch"
 fi
 
-target="$repo_dir/bin/llm-watch"
+find_cargo() {
+  local candidate
+  candidate=$(command -v cargo 2>/dev/null || true)
+  if [[ -n $candidate ]]; then
+    printf '%s\n' "$candidate"
+    return 0
+  fi
+  for candidate in \
+    "$HOME/.cargo/bin/cargo" \
+    /opt/homebrew/bin/cargo \
+    /usr/local/bin/cargo; do
+    if [[ -x $candidate ]]; then
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+if [[ -f $repo_dir/Cargo.toml ]]; then
+  cargo_bin=$(find_cargo || true)
+  if [[ -z $cargo_bin ]]; then
+    printf '[llm-watch-sync] Installing the minimal Rust toolchain with rustup\n'
+    rustup_installer=$(mktemp "${TMPDIR:-/tmp}/llm-watch-rustup.XXXXXX")
+    curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs -o "$rustup_installer"
+    sh "$rustup_installer" -y --profile minimal --no-modify-path
+    rm -f "$rustup_installer"
+    rustup_installer=
+    cargo_bin="$HOME/.cargo/bin/cargo"
+  fi
+  printf '[llm-watch-sync] Building the locked Rust release\n'
+  "$cargo_bin" build \
+    --quiet \
+    --release \
+    --locked \
+    --manifest-path "$repo_dir/Cargo.toml"
+  target="$repo_dir/target/release/llm-watch"
+else
+  # Compatibility with the original Python release during a staged rollout.
+  target="$repo_dir/bin/llm-watch"
+fi
+
 link="$HOME/.local/bin/llm-watch"
 if [[ ! -x $target ]]; then
   printf '[llm-watch-sync] Expected executable is missing: %s\n' "$target" >&2

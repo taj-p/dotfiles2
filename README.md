@@ -134,10 +134,13 @@ The tmux checkout is stored at `~/.local/share/tmux/oh-my-tmux`. Both
 files in that checkout. When a scheduled pull changes the tmux commit, a
 running tmux server is reloaded automatically.
 
-The llm-watch checkout is stored at `~/.local/share/llm-watch` and
-`~/.local/bin/llm-watch` points to its executable. Its repository and managed
-hook definitions are reconciled by every scheduled settings update. Invalid
-existing JSON configuration is reported and left untouched.
+The llm-watch checkout is stored at `~/.local/share/llm-watch`. The updater
+builds its locked Rust release and points `~/.local/bin/llm-watch` at the
+native binary. If Cargo is missing, the first Rust-based update installs a
+minimal per-user toolchain from the official rustup installer; later updates
+reuse it and rebuild incrementally. Its repository and managed hook definitions
+are reconciled by every scheduled settings update. Invalid existing JSON
+configuration is reported and left untouched.
 
 - macOS: a LaunchAgent runs the combined updater every 600 seconds.
 - Ubuntu with a user systemd session: a user timer runs every 10 minutes.

@@ -39,17 +39,50 @@ class SyncLlmWatchTests(unittest.TestCase):
         )
         return source
 
+    def create_rust_source(self, root: Path) -> Path:
+        source = root / "rust-source"
+        (source / "src").mkdir(parents=True)
+        (source / "Cargo.toml").write_text(
+            '[package]\nname = "llm-watch"\nversion = "0.2.0"\nedition = "2021"\n'
+        )
+        (source / "Cargo.lock").write_text("# fixture\n")
+        (source / "src/main.rs").write_text("fn main() {}\n")
+        subprocess.run(
+            ["git", "init", "-b", "main", source], check=True, capture_output=True
+        )
+        subprocess.run(["git", "-C", source, "add", "."], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                source,
+                "-c",
+                "user.name=Test",
+                "-c",
+                "user.email=test@example.com",
+                "commit",
+                "-m",
+                "fixture",
+            ],
+            check=True,
+            capture_output=True,
+        )
+        return source
+
+    def install_configurer(self, home: Path) -> None:
+        libexec = home / ".local/libexec/taj-dotfiles"
+        libexec.mkdir(parents=True)
+        configurer = libexec / "configure-llm-watch.py"
+        configurer.write_bytes((ROOT / "scripts/configure-llm-watch.py").read_bytes())
+        configurer.chmod(0o755)
+
     def test_clone_link_configure_and_repeat(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = self.create_source(root)
             home = root / "home"
 
-            libexec = home / ".local/libexec/taj-dotfiles"
-            libexec.mkdir(parents=True)
-            configurer = libexec / "configure-llm-watch.py"
-            configurer.write_bytes((ROOT / "scripts/configure-llm-watch.py").read_bytes())
-            configurer.chmod(0o755)
+            self.install_configurer(home)
 
             environment = dict(os.environ)
             environment.update(
@@ -72,6 +105,46 @@ class SyncLlmWatchTests(unittest.TestCase):
             claude = json.loads((home / ".claude/settings.json").read_text())
             self.assertIn("Stop", codex["hooks"])
             self.assertIn("Stop", claude["hooks"])
+
+    def test_rust_release_is_built_before_linking(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = self.create_rust_source(root)
+            home = root / "home"
+            self.install_configurer(home)
+            cargo = home / ".cargo/bin/cargo"
+            cargo.parent.mkdir(parents=True)
+            cargo.write_text(
+                "#!/usr/bin/env sh\n"
+                "while [ $# -gt 0 ]; do\n"
+                "  if [ \"$1\" = --manifest-path ]; then manifest=$2; shift 2; else shift; fi\n"
+                "done\n"
+                "repo=${manifest%/Cargo.toml}\n"
+                "mkdir -p \"$repo/target/release\"\n"
+                "printf '#!/usr/bin/env sh\\nexit 0\\n' >\"$repo/target/release/llm-watch\"\n"
+                "chmod 755 \"$repo/target/release/llm-watch\"\n"
+            )
+            cargo.chmod(0o755)
+
+            environment = dict(os.environ)
+            environment.update(
+                {
+                    "HOME": str(home),
+                    "PATH": f"{cargo.parent}:{environment['PATH']}",
+                    "LLM_WATCH_REPO": str(source),
+                    "LLM_WATCH_REPO_DIR": str(home / ".local/share/llm-watch"),
+                }
+            )
+            subprocess.run(
+                ["bash", str(ROOT / "scripts/sync-llm-watch.sh")],
+                env=environment,
+                check=True,
+                capture_output=True,
+            )
+
+            link = home / ".local/bin/llm-watch"
+            expected = home / ".local/share/llm-watch/target/release/llm-watch"
+            self.assertEqual(link.resolve(), expected.resolve())
 
     def test_self_update_installs_llm_watch_immediately(self):
         with tempfile.TemporaryDirectory() as directory:

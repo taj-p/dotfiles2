@@ -56,7 +56,7 @@ fi
 
 section "Optional integration"
 row "gh-dash (gh dash)" "GitHub dashboard; installed when GitHub CLI is present."
-row "llm-watch (llm-watch)" "Track Codex and Claude sessions across devboxes."
+row "llm-watch (Rust; llm-watch)" "Track Codex and Claude sessions across devboxes."
 
 section "Dotfiles commands"
 row "g [git arguments]" "Short alias for git."
