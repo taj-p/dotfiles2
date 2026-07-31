@@ -56,6 +56,7 @@ fi
 
 section "Optional integration"
 row "gh-dash (gh dash)" "GitHub dashboard; installed when GitHub CLI is present."
+row "llm-watch (llm-watch)" "Track Codex and Claude sessions across devboxes."
 
 section "Dotfiles commands"
 row "g [git arguments]" "Short alias for git."
@@ -63,8 +64,9 @@ row "qco <remote-ref>" "Fetch a ref from origin and check out FETCH_HEAD."
 row "dfh [difit arguments]" "Run difit through a reusable Highway tunnel."
 row "difit-highway" "Long form of dfh."
 row "dotfiles-packages" "Show this package and command reminder."
-row "dotfiles-sync-settings" "Update dotfiles, Neovim, and tmux together."
+row "dotfiles-sync-settings" "Update dotfiles, Neovim, tmux, and llm-watch."
 row "dotfiles-sync-repo" "Update and apply this dotfiles repository."
 row "dotfiles-sync-nvim" "Update the Neovim configuration only."
 row "dotfiles-sync-tmux" "Update the tmux configuration only."
+row "dotfiles-sync-llm-watch" "Update llm-watch and its agent hooks only."
 row "dotfiles-settings-sync-loop" "Fallback updater when user systemd is unavailable."

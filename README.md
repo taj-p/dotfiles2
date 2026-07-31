@@ -12,6 +12,9 @@ is checked for fast-forward updates every 10 minutes. It also installs tmux and
 the settings from `git@github.com:taj-p/.tmux.git`, which are updated on the
 same schedule. The dotfiles checkout itself is also fast-forwarded on that
 schedule, and updates are applied automatically with a lightweight reinstall.
+It also installs [`taj-p/llm-watch`](https://github.com/taj-p/llm-watch), keeps
+it updated on that schedule, and merges its Codex and Claude lifecycle hooks
+without replacing other configured hooks.
 
 ## Install
 
@@ -60,6 +63,8 @@ Tree-sitter binaries.
 - `difit`, installed with npm under `~/.local`
 - zoxide (`z`), lsd (`ls`), and bat
 - `gh-dash`, installed as a GitHub CLI extension when `gh` is available
+- `llm-watch`, installed from `taj-p/llm-watch` for cross-devbox agent status
+  and completion notifications
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
 
@@ -88,6 +93,17 @@ The long command name is `codex-review-head`. It requires an authenticated
 Codex CLI. GitHub CLI authentication is optional, but lets `crh` discover the
 base branch of an existing pull request.
 
+Run `llm-watch dashboard` on the laptop to poll running Coder workspaces whose
+names start with `dev`. On every machine, managed hooks write Codex and Claude
+state beneath `~/.local/state/llm-watch`. Hook configuration is merged into
+`~/.codex/hooks.json` and `~/.claude/settings.json`; existing unrelated hooks
+are retained and an existing file is backed up before its first change.
+
+Codex requires a one-time trust review for user command hooks. After the first
+dotfiles update that installs llm-watch, open `/hooks` in Codex and trust the
+llm-watch entries. The managed Codex `Stop` adapter emits the JSON response
+Codex expects and deliberately leaves any existing `notify` command untouched.
+
 The `dfh` command starts difit in the background, passes through any difit
 arguments, and connects it through `infra highway http`. Highway's tunnel cache
 reuses the same hostname so difit's browser-local state remains available
@@ -106,16 +122,22 @@ both the Highway tunnel and the local difit server.
 ## Automatic updates
 
 The command `dotfiles-sync-settings` updates this dotfiles checkout, Neovim,
-and tmux. The individual commands are `dotfiles-sync-repo`,
-`dotfiles-sync-nvim`, and `dotfiles-sync-tmux`. Updates use `git fetch` and
-`git merge --ff-only`, so they never reset, overwrite, or delete local changes.
-When the dotfiles checkout advances, the updater reruns `install.sh` without
-package upgrades, Neovim initialization, or scheduler restarts.
+tmux, and llm-watch. The individual commands are `dotfiles-sync-repo`,
+`dotfiles-sync-nvim`, `dotfiles-sync-tmux`, and
+`dotfiles-sync-llm-watch`. Updates use `git fetch` and `git merge --ff-only`,
+so they never reset, overwrite, or delete local repository changes. When the
+dotfiles checkout advances, the updater reruns `install.sh` without package
+upgrades, Neovim initialization, or scheduler restarts.
 
 The tmux checkout is stored at `~/.local/share/tmux/oh-my-tmux`. Both
 `~/.config/tmux/tmux.conf` and `tmux.conf.local` are symlinked to the committed
 files in that checkout. When a scheduled pull changes the tmux commit, a
 running tmux server is reloaded automatically.
+
+The llm-watch checkout is stored at `~/.local/share/llm-watch` and
+`~/.local/bin/llm-watch` points to its executable. Its repository and managed
+hook definitions are reconciled by every scheduled settings update. Invalid
+existing JSON configuration is reported and left untouched.
 
 - macOS: a LaunchAgent runs the combined updater every 600 seconds.
 - Ubuntu with a user systemd session: a user timer runs every 10 minutes.
@@ -145,6 +167,11 @@ These are mainly useful for testing or forks:
 - `TMUX_CONFIG_BRANCH` (default `master`)
 - `TMUX_REPO_DIR` (default `${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux`)
 - `TMUX_CONFIG_DIR` (default `${XDG_CONFIG_HOME:-$HOME/.config}/tmux`)
+- `LLM_WATCH_REPO` (default `git@github.com:taj-p/llm-watch.git`)
+- `LLM_WATCH_BRANCH` (default `main`)
+- `LLM_WATCH_REPO_DIR` (default
+  `${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch`)
+- `LLM_WATCH_SYNC_INTERVAL_SECONDS` (default `600`)
 - `TREE_SITTER_CLI_VERSION` on Ubuntu (default `0.25.10`, compatible with
   Ubuntu 22.04's glibc 2.35)
 
@@ -156,5 +183,6 @@ These are mainly useful for testing or forks:
   Remote Ubuntu/Coder machines do not need the font installed.
 - Initial Neovim startup downloads AstroNvim plugins and Mason packages, so it
   requires network access.
-- The tmux repository uses its SSH URL. The Mac or Coder workspace therefore
-  needs GitHub SSH access for installation and scheduled updates.
+- The tmux and llm-watch repositories use their SSH URLs. The Mac or Coder
+  workspace therefore needs GitHub SSH access for installation and scheduled
+  updates.

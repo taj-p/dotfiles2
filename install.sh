@@ -89,10 +89,15 @@ if [[ $install_shell_tools == 1 ]]; then
   "$ROOT_DIR/scripts/install-shell-tools.sh"
 fi
 
-install -d "$HOME/.local/bin" "$HOME/.local/state/taj-dotfiles" "$HOME/.config/taj-dotfiles"
+install -d \
+  "$HOME/.local/bin" \
+  "$HOME/.local/libexec/taj-dotfiles" \
+  "$HOME/.local/state/taj-dotfiles" \
+  "$HOME/.config/taj-dotfiles"
 install -m 0755 "$ROOT_DIR/scripts/sync-dotfiles.sh" "$HOME/.local/bin/dotfiles-sync-repo"
 install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync-nvim"
 install -m 0755 "$ROOT_DIR/scripts/sync-tmux.sh" "$HOME/.local/bin/dotfiles-sync-tmux"
+install -m 0755 "$ROOT_DIR/scripts/sync-llm-watch.sh" "$HOME/.local/bin/dotfiles-sync-llm-watch"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings.sh" "$HOME/.local/bin/dotfiles-sync-settings"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings-loop.sh" "$HOME/.local/bin/dotfiles-settings-sync-loop"
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/difit-highway"
@@ -101,6 +106,10 @@ install -m 0755 "$ROOT_DIR/scripts/list-packages.sh" "$HOME/.local/bin/dotfiles-
 install -m 0755 "$ROOT_DIR/scripts/quick-checkout.sh" "$HOME/.local/bin/qco"
 install -m 0755 "$ROOT_DIR/scripts/codex-review-head.sh" "$HOME/.local/bin/codex-review-head"
 install -m 0755 "$ROOT_DIR/scripts/codex-review-head.sh" "$HOME/.local/bin/crh"
+install -m 0755 "$ROOT_DIR/scripts/llm-watch-codex-stop-hook.sh" "$HOME/.local/bin/llm-watch-codex-stop-hook"
+install -m 0755 \
+  "$ROOT_DIR/scripts/configure-llm-watch.py" \
+  "$HOME/.local/libexec/taj-dotfiles/configure-llm-watch.py"
 install -m 0644 "$ROOT_DIR/shell/profile.sh" "$HOME/.config/taj-dotfiles/profile.sh"
 printf '%s\n' "$ROOT_DIR" >"$HOME/.config/taj-dotfiles/repo-dir"
 
@@ -127,7 +136,12 @@ if [[ ${DOTFILES_SELF_UPDATE:-0} != 1 ]]; then
     TMUX_CONFIG_BRANCH="${TMUX_CONFIG_BRANCH:-master}" \
     TMUX_REPO_DIR="${TMUX_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/tmux/oh-my-tmux}" \
     TMUX_CONFIG_DIR="${TMUX_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/tmux}" \
+    LLM_WATCH_REPO="${LLM_WATCH_REPO:-git@github.com:taj-p/llm-watch.git}" \
+    LLM_WATCH_BRANCH="${LLM_WATCH_BRANCH:-main}" \
+    LLM_WATCH_REPO_DIR="${LLM_WATCH_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch}" \
     "$HOME/.local/bin/dotfiles-sync-settings"
+else
+  "$HOME/.local/bin/dotfiles-sync-llm-watch"
 fi
 
 if [[ ${DOTFILES_NO_SCHEDULER:-0} != 1 ]]; then

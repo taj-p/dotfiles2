@@ -8,4 +8,5 @@ if [[ ${DOTFILES_SELF_UPDATE:-0} != 1 ]]; then
 fi
 "$HOME/.local/bin/dotfiles-sync-nvim" "$@" || status=1
 "$HOME/.local/bin/dotfiles-sync-tmux" "$@" || status=1
+"$HOME/.local/bin/dotfiles-sync-llm-watch" "$@" || status=1
 exit "$status"
