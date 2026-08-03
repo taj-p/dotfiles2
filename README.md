@@ -65,6 +65,7 @@ Tree-sitter binaries.
 - `gh-dash`, installed as a GitHub CLI extension when `gh` is available
 - `llm-watch`, installed from `taj-p/llm-watch` for cross-devbox agent status
   and completion notifications
+- Shared personal Codex and Claude skills from `agent-skills/`
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
 
@@ -92,6 +93,16 @@ crh main
 The long command name is `codex-review-head`. It requires an authenticated
 Codex CLI. GitHub CLI authentication is optional, but lets `crh` discover the
 base branch of an existing pull request.
+
+Use the shared `adversarial-pr-review` skill to review the entire current pull
+request for subtle correctness, security, data-loss, concurrency, compatibility,
+and regression risks. Invoke it with `$adversarial-pr-review` in Codex or
+`/adversarial-pr-review` in Claude Code.
+
+Canonical skills live under `agent-skills/`. The installer symlinks each skill
+into both `~/.agents/skills` and `~/.claude/skills`, backing up an existing path
+before replacing it. This keeps one prompt definition in `dotfiles2` while
+making it available across repositories to both tools.
 
 Run `llm-watch dashboard` on the laptop to poll running Coder workspaces whose
 names start with `dev`. On every machine, managed hooks write Codex and Claude

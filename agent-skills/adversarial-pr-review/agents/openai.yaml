@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adversarial PR Review"
+  short_description: "Find subtle, actionable defects in a PR"
+  default_prompt: "Use $adversarial-pr-review to review the current pull request for subtle, actionable defects."

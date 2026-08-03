@@ -94,6 +94,7 @@ install -d \
   "$HOME/.local/libexec/taj-dotfiles" \
   "$HOME/.local/state/taj-dotfiles" \
   "$HOME/.config/taj-dotfiles"
+"$ROOT_DIR/scripts/install-agent-skills.sh"
 install -m 0755 "$ROOT_DIR/scripts/sync-dotfiles.sh" "$HOME/.local/bin/dotfiles-sync-repo"
 install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync-nvim"
 install -m 0755 "$ROOT_DIR/scripts/sync-tmux.sh" "$HOME/.local/bin/dotfiles-sync-tmux"

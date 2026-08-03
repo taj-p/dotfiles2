@@ -184,6 +184,12 @@ class SyncLlmWatchTests(unittest.TestCase):
             self.assertTrue((home / ".local/bin/llm-watch").is_symlink())
             self.assertTrue((home / ".codex/hooks.json").exists())
             self.assertTrue((home / ".claude/settings.json").exists())
+            self.assertTrue(
+                (home / ".agents/skills/adversarial-pr-review").is_symlink()
+            )
+            self.assertTrue(
+                (home / ".claude/skills/adversarial-pr-review").is_symlink()
+            )
 
 
 if __name__ == "__main__":
