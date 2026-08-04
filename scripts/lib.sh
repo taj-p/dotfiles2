@@ -97,6 +97,22 @@ prepare_tmux_config() {
   done
 }
 
+install_wezterm_config() {
+  local source destination config_dir
+  source="$ROOT_DIR/wezterm/wezterm.lua"
+  config_dir=${XDG_CONFIG_HOME:-$HOME/.config}/wezterm
+  destination="$config_dir/wezterm.lua"
+
+  install -d "$config_dir"
+  if [[ -L $destination && $(readlink "$destination") == "$source" ]]; then
+    return 0
+  fi
+  if [[ -e $destination || -L $destination ]]; then
+    backup_path "$destination"
+  fi
+  ln -s "$source" "$destination"
+}
+
 install_macos_scheduler() {
   local src dest domain
   src="$ROOT_DIR/scheduler/macos/com.tajp.dotfiles-settings-sync.plist"

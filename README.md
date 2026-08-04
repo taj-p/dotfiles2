@@ -68,6 +68,8 @@ Tree-sitter binaries.
 - Shared personal Codex and Claude skills from `agent-skills/`
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
+- A managed WezTerm startup layout on macOS with a local `bl` tmux session and
+  persistent tmux sessions on the configured Coder devboxes
 
 The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
 `nvim` through a small managed fragment sourced by both Bash and Zsh. It also
@@ -94,6 +96,21 @@ The long command name is `codex-review-head`. It requires an authenticated
 Codex CLI. GitHub CLI authentication is optional, but lets `crh` discover the
 base branch of an existing pull request.
 
+Use `dpr <PR-URL> <remote-ref>` on the laptop to find a reachable devbox with
+no active Codex or Claude session, check out the ref with `qco`, and run the
+shared `adversarial-pr-review` skill through `codex exec` in a new tmux session.
+For example:
+
+```sh
+dpr https://github.com/Canva/canva/pull/12345 my-feature-branch
+```
+
+The matching GitHub checkout is discovered beneath the remote home directory.
+Use `--repo /path/to/checkout` to select it explicitly, `--host coder.dev2` to
+restrict candidate devboxes, or `--no-attach` to leave the review running in
+the background. A per-devbox advisory lock prevents simultaneous dispatchers
+from claiming the same machine before its Codex session appears in `llm-watch`.
+
 Use the shared `adversarial-pr-review` skill to review the entire current pull
 request for subtle correctness, security, data-loss, concurrency, compatibility,
 and regression risks. Invoke it with `$adversarial-pr-review` in Codex or
@@ -114,6 +131,15 @@ Codex requires a one-time trust review for user command hooks. After the first
 dotfiles update that installs llm-watch, open `/hooks` in Codex and trust the
 llm-watch entries. The managed Codex `Stop` adapter emits the JSON response
 Codex expects and deliberately leaves any existing `notify` command untouched.
+
+On macOS, WezTerm starts with five tabs. The first attaches to a local tmux
+session named `bl`, with a `tasks` window editing `~/bl/tasks.md` and a `server`
+window running `~/repos/bl/target/release/bl start` from `~/bl`. The remaining
+tabs connect to `coder.dev2`, `coder.dev3`, `coder.lsr-dash`, and `coder.dev-eu`.
+Each SSH connection attaches to, or creates, a remote tmux session named `main`,
+so its processes survive SSH and WezTerm restarts. The managed configuration is
+linked at `~/.config/wezterm/wezterm.lua`; a conflicting file is backed up on
+first installation.
 
 The `dfh` command starts difit in the background, passes through any difit
 arguments, and connects it through `infra highway http`. Highway's tunnel cache

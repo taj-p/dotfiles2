@@ -107,7 +107,13 @@ install -m 0755 "$ROOT_DIR/scripts/list-packages.sh" "$HOME/.local/bin/dotfiles-
 install -m 0755 "$ROOT_DIR/scripts/quick-checkout.sh" "$HOME/.local/bin/qco"
 install -m 0755 "$ROOT_DIR/scripts/codex-review-head.sh" "$HOME/.local/bin/codex-review-head"
 install -m 0755 "$ROOT_DIR/scripts/codex-review-head.sh" "$HOME/.local/bin/crh"
+install -m 0755 "$ROOT_DIR/scripts/devbox-pr-review.py" "$HOME/.local/bin/devbox-pr-review"
+install -m 0755 "$ROOT_DIR/scripts/devbox-pr-review.py" "$HOME/.local/bin/dpr"
 install -m 0755 "$ROOT_DIR/scripts/llm-watch-codex-stop-hook.sh" "$HOME/.local/bin/llm-watch-codex-stop-hook"
+if [[ $OS == macos ]]; then
+  install -m 0755 "$ROOT_DIR/scripts/bl-workspace.sh" "$HOME/.local/bin/bl-workspace"
+  install_wezterm_config
+fi
 install -m 0755 \
   "$ROOT_DIR/scripts/configure-llm-watch.py" \
   "$HOME/.local/libexec/taj-dotfiles/configure-llm-watch.py"

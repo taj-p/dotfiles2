@@ -61,6 +61,7 @@ row "llm-watch (Rust; llm-watch)" "Track Codex and Claude sessions across devbox
 section "Dotfiles commands"
 row "g [git arguments]" "Short alias for git."
 row "qco <remote-ref>" "Fetch a ref from origin and check out FETCH_HEAD."
+row "dpr <PR-URL> <remote-ref>" "Dispatch an adversarial Codex review to a free devbox."
 row "dfh [difit arguments]" "Run difit through a reusable Highway tunnel."
 row "difit-highway" "Long form of dfh."
 row "dotfiles-packages" "Show this package and command reminder."
