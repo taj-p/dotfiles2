@@ -132,10 +132,11 @@ dotfiles update that installs llm-watch, open `/hooks` in Codex and trust the
 llm-watch entries. The managed Codex `Stop` adapter emits the JSON response
 Codex expects and deliberately leaves any existing `notify` command untouched.
 
-On macOS, WezTerm starts with five tabs. The first attaches to a local tmux
-session named `bl`, with a `tasks` window editing `~/bl/tasks.md` and a `server`
-window running `~/repos/bl/target/release/bl start` from `~/bl`. The remaining
-tabs connect to `coder.dev2`, `coder.dev3`, `coder.lsr-dash`, and `coder.dev-eu`.
+On macOS, WezTerm starts with five tabs. The first reuses a local tmux session
+that is already editing `~/bl/tasks.md`, or creates a session named `bl` with a
+`tasks` window for that file and a `server` window running
+`~/repos/backlog/target/release/bl start` from `~/bl`. The remaining tabs
+connect to `coder.dev2`, `coder.dev3`, `coder.lsr-dash`, and `coder.dev-eu`.
 Each SSH connection attaches to, or creates, a remote tmux session named `main`,
 so its processes survive SSH and WezTerm restarts. The managed configuration is
 linked at `~/.config/wezterm/wezterm.lua`; a conflicting file is backed up on
@@ -155,6 +156,14 @@ dfh https://github.com/Canva/canva/pull/123456
 GitHub pull-request URLs are automatically passed to difit's `--pr` option;
 both the main PR URL and its `/changes` URL are accepted. Pressing Ctrl+C stops
 both the Highway tunnel and the local difit server.
+
+When `llm-watch` is installed, `dfh` also publishes its tunnel URL to the
+llm-watch web dashboard, so the difit page for each devbox is one click away
+instead of something to hunt for in a terminal. The URL is printed as
+`difit-highway: dashboard link <url>` and republished on a heartbeat while the
+tunnel runs; it is withdrawn when `dfh` exits, and expires on its own if `dfh`
+is killed. Publishing is best-effort — if `llm-watch` is missing or the URL
+cannot be detected, `dfh` behaves exactly as before.
 
 ## Automatic updates
 
