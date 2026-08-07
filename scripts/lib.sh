@@ -113,6 +113,31 @@ install_wezterm_config() {
   ln -s "$source" "$destination"
 }
 
+install_lazygit_config() {
+  local source config_dir destination
+  source="$ROOT_DIR/lazygit/config.yml"
+
+  if [[ -n ${LAZYGIT_CONFIG_DIR:-} ]]; then
+    config_dir=$LAZYGIT_CONFIG_DIR
+  elif command -v lazygit >/dev/null 2>&1; then
+    config_dir=$(lazygit --print-config-dir)
+  elif [[ $OS == macos ]]; then
+    config_dir="$HOME/Library/Application Support/lazygit"
+  else
+    config_dir=${XDG_CONFIG_HOME:-$HOME/.config}/lazygit
+  fi
+  destination="$config_dir/config.yml"
+
+  install -d "$config_dir"
+  if [[ -L $destination && $(readlink "$destination") == "$source" ]]; then
+    return 0
+  fi
+  if [[ -e $destination || -L $destination ]]; then
+    backup_path "$destination"
+  fi
+  ln -s "$source" "$destination"
+}
+
 install_macos_scheduler() {
   local src dest domain
   src="$ROOT_DIR/scheduler/macos/com.tajp.dotfiles-settings-sync.plist"

@@ -66,6 +66,7 @@ Tree-sitter binaries.
 - `llm-watch`, installed from `taj-p/llm-watch` for cross-devbox agent status
   and completion notifications
 - Shared personal Codex and Claude skills from `agent-skills/`
+- LazyGit configuration with automatic background fetching disabled
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
   the remote devbox)
 - A managed WezTerm startup layout on macOS with a local `bl` tmux session and
