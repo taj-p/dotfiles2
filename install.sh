@@ -100,6 +100,7 @@ install -m 0755 "$ROOT_DIR/scripts/sync-dotfiles.sh" "$HOME/.local/bin/dotfiles-
 install -m 0755 "$ROOT_DIR/scripts/sync-nvim.sh" "$HOME/.local/bin/dotfiles-sync-nvim"
 install -m 0755 "$ROOT_DIR/scripts/sync-tmux.sh" "$HOME/.local/bin/dotfiles-sync-tmux"
 install -m 0755 "$ROOT_DIR/scripts/sync-llm-watch.sh" "$HOME/.local/bin/dotfiles-sync-llm-watch"
+install -m 0755 "$ROOT_DIR/scripts/sync-choochoo.sh" "$HOME/.local/bin/dotfiles-sync-choochoo"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings.sh" "$HOME/.local/bin/dotfiles-sync-settings"
 install -m 0755 "$ROOT_DIR/scripts/sync-settings-loop.sh" "$HOME/.local/bin/dotfiles-settings-sync-loop"
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/difit-highway"
@@ -147,9 +148,13 @@ if [[ ${DOTFILES_SELF_UPDATE:-0} != 1 ]]; then
     LLM_WATCH_REPO="${LLM_WATCH_REPO:-https://github.com/taj-p/llm-watch.git}" \
     LLM_WATCH_BRANCH="${LLM_WATCH_BRANCH:-main}" \
     LLM_WATCH_REPO_DIR="${LLM_WATCH_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch}" \
+    CHOOCHOO_REPO="${CHOOCHOO_REPO:-https://github.com/taj-p/choochoo.git}" \
+    CHOOCHOO_BRANCH="${CHOOCHOO_BRANCH:-main}" \
+    CHOOCHOO_REPO_DIR="${CHOOCHOO_REPO_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/choochoo}" \
     "$HOME/.local/bin/dotfiles-sync-settings"
 else
   "$HOME/.local/bin/dotfiles-sync-llm-watch"
+  "$HOME/.local/bin/dotfiles-sync-choochoo"
 fi
 
 if [[ ${DOTFILES_NO_SCHEDULER:-0} != 1 ]]; then

@@ -150,6 +150,36 @@ class SyncLlmWatchTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = self.create_source(root)
+            choochoo_source = root / "choochoo-source"
+            (choochoo_source / "src").mkdir(parents=True)
+            (choochoo_source / "Cargo.toml").write_text(
+                '[package]\nname = "choochoo"\nversion = "0.1.0"\nedition = "2021"\n'
+                '[[bin]]\nname = "choo"\npath = "src/main.rs"\n'
+            )
+            (choochoo_source / "Cargo.lock").write_text("# fixture\n")
+            (choochoo_source / "src/main.rs").write_text("fn main() {}\n")
+            subprocess.run(
+                ["git", "init", "-b", "main", choochoo_source],
+                check=True,
+                capture_output=True,
+            )
+            subprocess.run(["git", "-C", choochoo_source, "add", "."], check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    choochoo_source,
+                    "-c",
+                    "user.name=Test",
+                    "-c",
+                    "user.email=test@example.com",
+                    "commit",
+                    "-m",
+                    "fixture",
+                ],
+                check=True,
+                capture_output=True,
+            )
             home = root / "home"
             local_bin = home / ".local/bin"
             local_bin.mkdir(parents=True)
@@ -157,15 +187,30 @@ class SyncLlmWatchTests(unittest.TestCase):
                 stub = local_bin / name
                 stub.write_text("#!/usr/bin/env sh\nexit 0\n")
                 stub.chmod(0o755)
+            cargo = home / ".cargo/bin/cargo"
+            cargo.parent.mkdir(parents=True)
+            cargo.write_text(
+                "#!/usr/bin/env sh\n"
+                "while [ $# -gt 0 ]; do\n"
+                '  if [ "$1" = --manifest-path ]; then manifest=$2; shift 2; else shift; fi\n'
+                "done\n"
+                "repo=${manifest%/Cargo.toml}\n"
+                'mkdir -p "$repo/target/release"\n'
+                "printf '#!/usr/bin/env sh\\nexit 0\\n' >\"$repo/target/release/choo\"\n"
+                'chmod 755 "$repo/target/release/choo"\n'
+            )
+            cargo.chmod(0o755)
 
             environment = dict(os.environ)
             environment.update(
                 {
                     "HOME": str(home),
-                    "PATH": f"{local_bin}:{environment['PATH']}",
+                    "PATH": f"{cargo.parent}:{local_bin}:{environment['PATH']}",
                     "DOTFILES_SELF_UPDATE": "1",
                     "LLM_WATCH_REPO": str(source),
                     "LLM_WATCH_REPO_DIR": str(home / ".local/share/llm-watch"),
+                    "CHOOCHOO_REPO": str(choochoo_source),
+                    "CHOOCHOO_REPO_DIR": str(home / ".local/share/choochoo"),
                 }
             )
             subprocess.run(
@@ -182,6 +227,7 @@ class SyncLlmWatchTests(unittest.TestCase):
             )
 
             self.assertTrue((home / ".local/bin/llm-watch").is_symlink())
+            self.assertTrue((home / ".local/bin/choo").is_symlink())
             self.assertTrue((home / ".codex/hooks.json").exists())
             self.assertTrue((home / ".claude/settings.json").exists())
             self.assertTrue(

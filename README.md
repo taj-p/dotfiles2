@@ -15,6 +15,8 @@ schedule, and updates are applied automatically with a lightweight reinstall.
 It also installs [`taj-p/llm-watch`](https://github.com/taj-p/llm-watch), keeps
 it updated on that schedule, and merges its Codex and Claude lifecycle hooks
 without replacing other configured hooks.
+It installs [`taj-p/choochoo`](https://github.com/taj-p/choochoo) as `choo`
+and keeps it updated on the same schedule.
 
 ## Install
 
@@ -65,6 +67,8 @@ Tree-sitter binaries.
 - `gh-dash`, installed as a GitHub CLI extension when `gh` is available
 - `llm-watch`, installed from `taj-p/llm-watch` for cross-devbox agent status
   and completion notifications
+- `choochoo` (`choo`), installed from `taj-p/choochoo` for managing stacked
+  GitHub pull-request trains
 - Shared personal Codex and Claude skills from `agent-skills/`
 - LazyGit configuration with automatic background fetching disabled
 - JetBrainsMono Nerd Font on macOS (the font belongs on the local terminal, not
@@ -169,9 +173,10 @@ cannot be detected, `dfh` behaves exactly as before.
 ## Automatic updates
 
 The command `dotfiles-sync-settings` updates this dotfiles checkout, Neovim,
-tmux, and llm-watch. The individual commands are `dotfiles-sync-repo`,
-`dotfiles-sync-nvim`, `dotfiles-sync-tmux`, and
-`dotfiles-sync-llm-watch`. Updates use `git fetch` and `git merge --ff-only`,
+tmux, llm-watch, and choochoo. The individual commands are
+`dotfiles-sync-repo`, `dotfiles-sync-nvim`, `dotfiles-sync-tmux`,
+`dotfiles-sync-llm-watch`, and `dotfiles-sync-choochoo`. Updates use `git fetch`
+and `git merge --ff-only`,
 so they never reset, overwrite, or delete local repository changes. When the
 dotfiles checkout advances, the updater reruns `install.sh` without package
 upgrades, Neovim initialization, or scheduler restarts.
@@ -188,6 +193,11 @@ minimal per-user toolchain from the official rustup installer; later updates
 reuse it and rebuild incrementally. Its repository and managed hook definitions
 are reconciled by every scheduled settings update. Invalid existing JSON
 configuration is reported and left untouched.
+
+The choochoo checkout is stored at `~/.local/share/choochoo`. Its locked Rust
+release is rebuilt after fast-forward updates and exposed as
+`~/.local/bin/choo`. It reuses the same per-user Rust toolchain and requires
+`git` and an authenticated `gh` command when operating on GitHub pull requests.
 
 - macOS: a LaunchAgent runs the combined updater every 600 seconds.
 - Ubuntu with a user systemd session: a user timer runs every 10 minutes.
@@ -222,6 +232,11 @@ These are mainly useful for testing or forks:
 - `LLM_WATCH_REPO_DIR` (default
   `${XDG_DATA_HOME:-$HOME/.local/share}/llm-watch`)
 - `LLM_WATCH_SYNC_INTERVAL_SECONDS` (default `600`)
+- `CHOOCHOO_REPO` (default `https://github.com/taj-p/choochoo.git`)
+- `CHOOCHOO_BRANCH` (default `main`)
+- `CHOOCHOO_REPO_DIR` (default
+  `${XDG_DATA_HOME:-$HOME/.local/share}/choochoo`)
+- `CHOOCHOO_SYNC_INTERVAL_SECONDS` (default `600`)
 - `TREE_SITTER_CLI_VERSION` on Ubuntu (default `0.25.10`, compatible with
   Ubuntu 22.04's glibc 2.35)
 

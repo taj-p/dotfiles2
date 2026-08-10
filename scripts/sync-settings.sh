@@ -9,4 +9,5 @@ fi
 "$HOME/.local/bin/dotfiles-sync-nvim" "$@" || status=1
 "$HOME/.local/bin/dotfiles-sync-tmux" "$@" || status=1
 "$HOME/.local/bin/dotfiles-sync-llm-watch" "$@" || status=1
+"$HOME/.local/bin/dotfiles-sync-choochoo" "$@" || status=1
 exit "$status"
