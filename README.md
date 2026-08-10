@@ -198,6 +198,10 @@ The choochoo checkout is stored at `~/.local/share/choochoo`. Its locked Rust
 release is rebuilt after fast-forward updates and exposed as
 `~/.local/bin/choo`. It reuses the same per-user Rust toolchain and requires
 `git` and an authenticated `gh` command when operating on GitHub pull requests.
+The managed `~/.config/choochoo/config.toml` points its shared train state at
+the private `taj-p/choochoo-config` repository, so trains are available across
+the laptop and devboxes. An existing config file is moved to a timestamped
+backup before the managed symlink is installed.
 
 - macOS: a LaunchAgent runs the combined updater every 600 seconds.
 - Ubuntu with a user systemd session: a user timer runs every 10 minutes.

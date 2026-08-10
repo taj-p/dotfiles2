@@ -138,6 +138,22 @@ install_lazygit_config() {
   ln -s "$source" "$destination"
 }
 
+install_choochoo_config() {
+  local source config_dir destination
+  source="$ROOT_DIR/choochoo/config.toml"
+  config_dir=${XDG_CONFIG_HOME:-$HOME/.config}/choochoo
+  destination="$config_dir/config.toml"
+
+  install -d "$config_dir"
+  if [[ -L $destination && $(readlink "$destination") == "$source" ]]; then
+    return 0
+  fi
+  if [[ -e $destination || -L $destination ]]; then
+    backup_path "$destination"
+  fi
+  ln -s "$source" "$destination"
+}
+
 install_macos_scheduler() {
   local src dest domain
   src="$ROOT_DIR/scheduler/macos/com.tajp.dotfiles-settings-sync.plist"

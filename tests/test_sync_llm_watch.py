@@ -228,6 +228,12 @@ class SyncLlmWatchTests(unittest.TestCase):
 
             self.assertTrue((home / ".local/bin/llm-watch").is_symlink())
             self.assertTrue((home / ".local/bin/choo").is_symlink())
+            choochoo_config = home / ".config/choochoo/config.toml"
+            self.assertTrue(choochoo_config.is_symlink())
+            self.assertIn(
+                "git@github.com:taj-p/choochoo-config.git",
+                choochoo_config.read_text(),
+            )
             self.assertTrue((home / ".codex/hooks.json").exists())
             self.assertTrue((home / ".claude/settings.json").exists())
             self.assertTrue(
