@@ -1,3 +1,6 @@
 [store]
 repo = "git@github.com:taj-p/choochoo-config.git"
 branch = "main"
+
+[repo."https://github.com/Canva/canva"]
+base = "master"

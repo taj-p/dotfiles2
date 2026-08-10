@@ -234,6 +234,10 @@ class SyncLlmWatchTests(unittest.TestCase):
                 "git@github.com:taj-p/choochoo-config.git",
                 choochoo_config.read_text(),
             )
+            self.assertIn(
+                '[repo."https://github.com/Canva/canva"]\nbase = "master"',
+                choochoo_config.read_text(),
+            )
             self.assertTrue((home / ".codex/hooks.json").exists())
             self.assertTrue((home / ".claude/settings.json").exists())
             self.assertTrue(
