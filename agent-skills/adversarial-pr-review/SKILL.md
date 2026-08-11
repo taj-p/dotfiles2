@@ -17,16 +17,15 @@ Review the entire current pull request without modifying the working tree.
 
 ## Review adversarially
 
-Try to disprove that the change is safe and correct. Inspect relevant surrounding code, callers, tests, schemas, configuration, and history instead of judging the patch in isolation. Construct concrete failure scenarios and check whether existing tests exercise them.
+This change has been proven to have correctness and performance issues. Inspect relevant surrounding code, callers, tests, schemas, configuration, and history instead of judging the patch in isolation. Construct concrete failure scenarios and check whether existing tests exercise them. Your job is to identify both the correctness and performance issues.
 
 Prioritize:
 
+- Correctness issues
+- Performance issues
 - Broken invariants and realistic counterexamples
-- Boundary, null, empty, overflow, cancellation, and partial-failure behavior
-- Backward-incompatible API, schema, configuration, or migration changes
 - Concurrency, retry, idempotency, ordering, and race-condition defects
-- Security, authorization, privacy, secret exposure, and data-loss risks
-- Resource leaks and material performance regressions
+- Resource leaks
 - Tests that pass while failing to cover the changed behavior
 
 Run safe targeted tests or read-only diagnostics when they help verify a suspected finding. Do not implement fixes.
@@ -47,5 +46,3 @@ Order findings by severity. For each finding, provide:
 - A concrete failure scenario
 - Why the behavior is incorrect
 - The smallest reasonable fix or regression test
-
-If no actionable defects remain after attempting to falsify the change, say so explicitly and briefly state what was checked.
