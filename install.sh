@@ -106,6 +106,8 @@ install -m 0755 "$ROOT_DIR/scripts/sync-settings.sh" "$HOME/.local/bin/dotfiles-
 install -m 0755 "$ROOT_DIR/scripts/sync-settings-loop.sh" "$HOME/.local/bin/dotfiles-settings-sync-loop"
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/difit-highway"
 install -m 0755 "$ROOT_DIR/scripts/difit-highway.sh" "$HOME/.local/bin/dfh"
+install -m 0755 "$ROOT_DIR/scripts/difit-train.sh" "$HOME/.local/bin/difit-train"
+install -m 0755 "$ROOT_DIR/scripts/difit-train.sh" "$HOME/.local/bin/dfh-train"
 install -m 0755 "$ROOT_DIR/scripts/list-packages.sh" "$HOME/.local/bin/dotfiles-packages"
 install -m 0755 "$ROOT_DIR/scripts/quick-checkout.sh" "$HOME/.local/bin/qco"
 install -m 0755 "$ROOT_DIR/scripts/codex-review-head.sh" "$HOME/.local/bin/codex-review-head"
@@ -120,6 +122,13 @@ fi
 install -m 0755 \
   "$ROOT_DIR/scripts/configure-llm-watch.py" \
   "$HOME/.local/libexec/taj-dotfiles/configure-llm-watch.py"
+# Sourced by the difit wrappers rather than run, so it is not executable.
+install -m 0644 \
+  "$ROOT_DIR/scripts/highway-tunnel.sh" \
+  "$HOME/.local/libexec/taj-dotfiles/highway-tunnel.sh"
+install -m 0755 \
+  "$ROOT_DIR/scripts/difit-train-router.mjs" \
+  "$HOME/.local/libexec/taj-dotfiles/difit-train-router.mjs"
 install -m 0644 "$ROOT_DIR/shell/profile.sh" "$HOME/.config/taj-dotfiles/profile.sh"
 printf '%s\n' "$ROOT_DIR" >"$HOME/.config/taj-dotfiles/repo-dir"
 

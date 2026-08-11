@@ -170,6 +170,30 @@ tunnel runs; it is withdrawn when `dfh` exits, and expires on its own if `dfh`
 is killed. Publishing is best-effort — if `llm-watch` is missing or the URL
 cannot be detected, `dfh` behaves exactly as before.
 
+The `dfh-train` command reviews a whole [choochoo](https://github.com/taj-p/choochoo)
+train behind a single URL. It reads `choo show --json`, starts one difit per
+branch showing that branch against its parent — plus one for the combined
+branch, if the train has one — and fronts them all with a small router, so only
+one Highway tunnel is involved and reviewers already allowed onto that hostname
+need no further access:
+
+```sh
+dfh-train             # the active train
+dfh-train flat-text   # a train by name
+```
+
+The printed URL ends in `/_train`, an index of every branch in stack order.
+Every difit page also carries a bar in its bottom-left corner for stepping to
+the previous or next branch, so a train can be read straight through. Review
+comments are kept separately per branch. A branch difit refuses — one that
+isn't checked out locally, say — is reported on the index page and the rest of
+the train stays usable. Pressing Ctrl+C stops the tunnel, the router, and every
+difit server.
+
+Both commands share `scripts/highway-tunnel.sh`, installed to
+`~/.local/libexec/taj-dotfiles/`, which owns starting the tunnel and keeping
+the dashboard link alive.
+
 ## Automatic updates
 
 The command `dotfiles-sync-settings` updates this dotfiles checkout, Neovim,
