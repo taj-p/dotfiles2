@@ -38,6 +38,7 @@ row "difit (difit)" "Browser-based Git diff and PR viewer."
 row "zoxide (zoxide, z)" "Smarter directory jumping based on usage history."
 row "lsd (lsd, ls)" "Modern directory listing with colors and icons."
 row "bat (bat)" "Syntax-highlighted file viewer and cat replacement."
+row "Mergiraf (mergiraf)" "Syntax-aware, opt-in Git conflict resolution."
 
 if [[ $os == Darwin ]]; then
   section "macOS additions"

@@ -183,7 +183,7 @@ class SyncLlmWatchTests(unittest.TestCase):
             home = root / "home"
             local_bin = home / ".local/bin"
             local_bin.mkdir(parents=True)
-            for name in ("difit", "zoxide", "lsd", "bat"):
+            for name in ("difit", "zoxide", "lsd", "bat", "mergiraf"):
                 stub = local_bin / name
                 stub.write_text("#!/usr/bin/env sh\nexit 0\n")
                 stub.chmod(0o755)

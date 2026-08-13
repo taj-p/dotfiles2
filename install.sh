@@ -81,12 +81,19 @@ if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
 elif [[ ${DOTFILES_SELF_UPDATE:-0} == 1 ]] \
   && { ! has_shell_tool zoxide \
     || ! has_shell_tool lsd \
-    || ! has_shell_tool bat; }; then
+    || ! has_shell_tool bat \
+    || ! has_shell_tool mergiraf; }; then
   log "Modern shell tools are missing; installing them during the dotfiles update"
   install_shell_tools=1
 fi
 if [[ $install_shell_tools == 1 ]]; then
   "$ROOT_DIR/scripts/install-shell-tools.sh"
+fi
+
+# Mergiraf's interactive solver needs the base revision embedded in conflict
+# markers. Keep its merge driver opt-in, but make `mergiraf solve` ready to use.
+if command -v git >/dev/null 2>&1; then
+  git config --global merge.conflictStyle diff3
 fi
 
 install -d \

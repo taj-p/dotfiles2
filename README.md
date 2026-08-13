@@ -63,7 +63,7 @@ Tree-sitter binaries.
 - Node.js, npm, Python, and Go for LSPs and AstroNvim terminal integrations
 - bottom (`btm`) and go DiskUsage (`gdu`)
 - `difit`, installed with npm under `~/.local`
-- zoxide (`z`), lsd (`ls`), and bat
+- zoxide (`z`), lsd (`ls`), bat, and Mergiraf
 - `gh-dash`, installed as a GitHub CLI extension when `gh` is available
 - `llm-watch`, installed from `taj-p/llm-watch` for cross-devbox agent status
   and completion notifications
@@ -83,6 +83,41 @@ zoxide as `z`, and aliases `ls` to `lsd`.
 
 Run `dotfiles-packages` for a quick reminder of every managed package, its
 command name, and what it is used for.
+
+### Mergiraf
+
+[Mergiraf](https://mergiraf.org/) is installed for syntax-aware Git conflict
+resolution. The installer also sets Git's global conflict style to `diff3`, so
+Mergiraf can reconstruct the base revision. It is deliberately not registered
+as the default merge driver: use it after Git reports a conflict, then review
+the result before staging it.
+
+```sh
+git merge <branch>
+git diff --name-only --diff-filter=U
+mergiraf solve path/to/conflicted-file
+git diff
+git add path/to/conflicted-file
+git merge --continue
+```
+
+Run `mergiraf solve` once for each supported conflicted file. If it cannot
+resolve a conflict safely, it leaves conflict markers for manual resolution.
+After using it, run the project's formatter and tests before continuing.
+
+For a repository where Mergiraf has proven reliable, it can be enabled as the
+automatic merge driver without changing global attributes:
+
+```sh
+git config merge.mergiraf.name mergiraf
+git config merge.mergiraf.driver \
+  'mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L'
+printf '* merge=mergiraf\n' >> .git/info/attributes
+```
+
+Review syntax-aware automatic resolutions with `mergiraf review <merge-id>`;
+Git prints the merge ID when Mergiraf resolves a conflict. Temporarily bypass
+an enabled driver with `mergiraf=0 git merge <branch>`.
 
 Use `qco <remote-ref>` for a quick detached checkout. It runs
 `git fetch origin <remote-ref>` followed by `git checkout FETCH_HEAD`.

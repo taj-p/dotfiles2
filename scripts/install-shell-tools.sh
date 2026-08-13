@@ -13,9 +13,9 @@ case "$os" in
     elif [[ -x /usr/local/bin/brew ]]; then
       eval "$(/usr/local/bin/brew shellenv)"
     fi
-    command -v brew >/dev/null 2>&1 || die "Homebrew is required to install zoxide, lsd, and bat on macOS."
+    command -v brew >/dev/null 2>&1 || die "Homebrew is required to install zoxide, lsd, bat, and Mergiraf on macOS."
     log "Installing modern shell tools with Homebrew"
-    brew install zoxide lsd bat
+    brew install zoxide lsd bat mergiraf
     ;;
   Linux | linux)
     arch=$(uname -m)
@@ -63,6 +63,15 @@ case "$os" in
     "$HOME/.local/bin/zoxide" --version
     "$HOME/.local/bin/lsd" --version
     "$HOME/.local/bin/bat" --version
+
+    mergiraf_target="${release_arch}-unknown-linux-gnu"
+    log "Installing the latest Mergiraf release"
+    curl -fsSL \
+      "https://codeberg.org/mergiraf/mergiraf/releases/download/latest/mergiraf_${mergiraf_target}.tar.gz" \
+      -o "$tmp/mergiraf.tar.gz"
+    tar -xzf "$tmp/mergiraf.tar.gz" -C "$tmp" mergiraf
+    install -m 0755 "$tmp/mergiraf" "$HOME/.local/bin/mergiraf"
+    "$HOME/.local/bin/mergiraf" --version
     ;;
   *) die "Unsupported operating system for shell tools: $os" ;;
 esac
