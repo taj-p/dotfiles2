@@ -36,6 +36,15 @@ wezterm.on('gui-startup', function(cmd)
     tab:set_title(host)
   end
 
+  -- The laptop itself, last in the tab list and shaped like a devbox: one tab,
+  -- one `main` tmux session. `llm-watch` watches it under the alias `local`, so
+  -- the dashboard's jump button finds this tab by title like any other host.
+  local laptop_tab = window:spawn_tab {
+    cwd = home,
+    args = { '/opt/homebrew/bin/tmux', 'new-session', '-A', '-s', 'main' },
+  }
+  laptop_tab:set_title 'local'
+
   local_tab:activate()
 end)
 
