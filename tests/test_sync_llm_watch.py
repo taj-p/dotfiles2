@@ -191,6 +191,27 @@ class SyncLlmWatchTests(unittest.TestCase):
             cargo.parent.mkdir(parents=True)
             cargo.write_text(
                 "#!/usr/bin/env sh\n"
+                "if [ \"${1:-}\" = install ]; then\n"
+                "  crate= locked=0\n"
+                "  while [ $# -gt 0 ]; do\n"
+                "    case \"$1\" in\n"
+                "      --locked) locked=1; shift ;;\n"
+                "      cargo-watch) crate=$1; shift ;;\n"
+                "      wasm-bindgen-cli@0.2.123) crate=$1; shift ;;\n"
+                "      *) shift ;;\n"
+                "    esac\n"
+                "  done\n"
+                "  if [ \"$crate\" = cargo-watch ] && [ \"$locked\" -eq 1 ]; then\n"
+                "    printf '#!/usr/bin/env sh\\nexit 0\\n' >\"$HOME/.cargo/bin/cargo-watch\"\n"
+                "    chmod 755 \"$HOME/.cargo/bin/cargo-watch\"\n"
+                "  elif [ \"$crate\" = wasm-bindgen-cli@0.2.123 ]; then\n"
+                "    printf '#!/usr/bin/env sh\\nprintf \\\"wasm-bindgen 0.2.123\\\\n\\\"\\n' >\"$HOME/.cargo/bin/wasm-bindgen\"\n"
+                "    chmod 755 \"$HOME/.cargo/bin/wasm-bindgen\"\n"
+                "  else\n"
+                "    exit 2\n"
+                "  fi\n"
+                "  exit 0\n"
+                "fi\n"
                 "while [ $# -gt 0 ]; do\n"
                 '  if [ "$1" = --manifest-path ]; then manifest=$2; shift 2; else shift; fi\n'
                 "done\n"
@@ -200,12 +221,20 @@ class SyncLlmWatchTests(unittest.TestCase):
                 'chmod 755 "$repo/target/release/choo"\n'
             )
             cargo.chmod(0o755)
+            cargo_watch = cargo.parent / "cargo-watch"
+            cargo_watch.write_text("#!/usr/bin/env sh\nexit 0\n")
+            cargo_watch.chmod(0o755)
+            wasm_bindgen = cargo.parent / "wasm-bindgen"
+            wasm_bindgen.write_text(
+                '#!/usr/bin/env sh\nprintf "wasm-bindgen 0.2.122\\n"\n'
+            )
+            wasm_bindgen.chmod(0o755)
 
             environment = dict(os.environ)
             environment.update(
                 {
                     "HOME": str(home),
-                    "PATH": f"{cargo.parent}:{local_bin}:{environment['PATH']}",
+                    "PATH": f"{cargo.parent}:{local_bin}:{os.defpath}",
                     "DOTFILES_SELF_UPDATE": "1",
                     "LLM_WATCH_REPO": str(source),
                     "LLM_WATCH_REPO_DIR": str(home / ".local/share/llm-watch"),
@@ -228,6 +257,16 @@ class SyncLlmWatchTests(unittest.TestCase):
 
             self.assertTrue((home / ".local/bin/llm-watch").is_symlink())
             self.assertTrue((home / ".local/bin/choo").is_symlink())
+            self.assertTrue(os.access(home / ".cargo/bin/cargo-watch", os.X_OK))
+            self.assertEqual(
+                subprocess.run(
+                    [home / ".cargo/bin/wasm-bindgen", "--version"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip(),
+                "wasm-bindgen 0.2.123",
+            )
             choochoo_config = home / ".config/choochoo/config.toml"
             self.assertTrue(choochoo_config.is_symlink())
             self.assertIn(

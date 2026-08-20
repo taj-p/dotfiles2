@@ -71,8 +71,27 @@ fi
 has_shell_tool() {
   command -v "$1" >/dev/null 2>&1 \
     || [[ -x "$HOME/.local/bin/$1" ]] \
+    || [[ -x "$HOME/.cargo/bin/$1" ]] \
     || [[ -x "/opt/homebrew/bin/$1" ]] \
     || [[ -x "/usr/local/bin/$1" ]]
+}
+
+has_wasm_bindgen_cli_0_2_123() {
+  local candidate version
+  candidate=$(command -v wasm-bindgen 2>/dev/null || true)
+  if [[ -z $candidate ]]; then
+    for candidate in \
+      "$HOME/.local/bin/wasm-bindgen" \
+      "$HOME/.cargo/bin/wasm-bindgen" \
+      /opt/homebrew/bin/wasm-bindgen \
+      /usr/local/bin/wasm-bindgen; do
+      [[ -x $candidate ]] && break
+      candidate=
+    done
+  fi
+  [[ -n $candidate ]] || return 1
+  version=$("$candidate" --version 2>/dev/null || true)
+  [[ $version == "wasm-bindgen 0.2.123" ]]
 }
 
 install_shell_tools=0
@@ -88,6 +107,19 @@ elif [[ ${DOTFILES_SELF_UPDATE:-0} == 1 ]] \
 fi
 if [[ $install_shell_tools == 1 ]]; then
   "$ROOT_DIR/scripts/install-shell-tools.sh"
+fi
+
+install_cargo_tools=0
+if [[ ${DOTFILES_SKIP_PACKAGES:-0} != 1 ]]; then
+  install_cargo_tools=1
+elif [[ ${DOTFILES_SELF_UPDATE:-0} == 1 ]] \
+  && { ! has_shell_tool cargo-watch \
+    || ! has_wasm_bindgen_cli_0_2_123; }; then
+  log "Cargo tools are missing or out of date; installing them during the dotfiles update"
+  install_cargo_tools=1
+fi
+if [[ $install_cargo_tools == 1 ]]; then
+  "$ROOT_DIR/scripts/install-cargo-tools.sh"
 fi
 
 # Mergiraf's interactive solver needs the base revision embedded in conflict

@@ -7,6 +7,13 @@ if [ -d /opt/homebrew/bin ]; then
   esac
 fi
 
+if [ -d "$HOME/.cargo/bin" ]; then
+  case ":$PATH:" in
+    *":$HOME/.cargo/bin:"*) ;;
+    *) export PATH="$HOME/.cargo/bin:$PATH" ;;
+  esac
+fi
+
 case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
   *) export PATH="$HOME/.local/bin:$PATH" ;;

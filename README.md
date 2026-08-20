@@ -61,6 +61,9 @@ Tree-sitter binaries.
 - Tree-sitter CLI and a C compiler/toolchain
 - Git, curl, unzip, and a system clipboard provider
 - Node.js, npm, Python, and Go for LSPs and AstroNvim terminal integrations
+- A minimal Rust toolchain and `cargo-watch` (`cargo watch`) for automatically
+  rerunning Cargo commands when project files change
+- `wasm-bindgen-cli` 0.2.123 for generating WebAssembly bindings
 - bottom (`btm`) and go DiskUsage (`gdu`)
 - `difit`, installed with npm under `~/.local`
 - zoxide (`z`), lsd (`ls`), bat, and Mergiraf
@@ -76,10 +79,10 @@ Tree-sitter binaries.
 - A managed WezTerm startup layout on macOS with a local `bl` tmux session and
   persistent tmux sessions on the configured Coder devboxes
 
-The installer also adds `~/.local/bin` to `PATH` and sets `EDITOR`/`VISUAL` to
-`nvim` through a small managed fragment sourced by both Bash and Zsh. It also
-provides `g` and `lg` as short aliases for `git` and `lazygit`, initializes
-zoxide as `z`, and aliases `ls` to `lsd`.
+The installer also adds `~/.local/bin` and the per-user Cargo bin directory to
+`PATH`, and sets `EDITOR`/`VISUAL` to `nvim` through a small managed fragment
+sourced by both Bash and Zsh. It also provides `g` and `lg` as short aliases
+for `git` and `lazygit`, initializes zoxide as `z`, and aliases `ls` to `lsd`.
 
 Run `dotfiles-packages` for a quick reminder of every managed package, its
 command name, and what it is used for.
@@ -247,10 +250,11 @@ running tmux server is reloaded automatically.
 
 The llm-watch checkout is stored at `~/.local/share/llm-watch`. The updater
 builds its locked Rust release and points `~/.local/bin/llm-watch` at the
-native binary. If Cargo is missing, the first Rust-based update installs a
-minimal per-user toolchain from the official rustup installer; later updates
-reuse it and rebuild incrementally. Its repository and managed hook definitions
-are reconciled by every scheduled settings update. Invalid existing JSON
+native binary. The installer provides a minimal per-user Rust toolchain from
+the official rustup installer when Cargo is missing, then uses it to install
+`cargo-watch` and `wasm-bindgen-cli` 0.2.123; later updates reuse the toolchain
+and rebuild incrementally. Its repository and managed hook definitions are
+reconciled by every scheduled settings update. Invalid existing JSON
 configuration is reported and left untouched.
 
 The choochoo checkout is stored at `~/.local/share/choochoo`. Its locked Rust
