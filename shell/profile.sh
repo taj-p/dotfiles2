@@ -24,6 +24,7 @@ export VISUAL=nvim
 
 alias lg='lazygit'
 alias g='git'
+alias gaf='git commit --amend --no-edit && g push --force'
 alias ls='lsd'
 
 if command -v zoxide >/dev/null 2>&1; then
