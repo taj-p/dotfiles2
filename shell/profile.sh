@@ -26,6 +26,13 @@ alias lg='lazygit'
 alias g='git'
 alias gaf='git commit --amend --no-edit && g push --force'
 alias ls='lsd'
+alias bur='bazel fetch --repo=@crate_index \
+  --repo_env=GITHUB_TOKEN="$(gh auth token)" \
+  --repo_env=GIT_ASKPASS="$GIT_ASKPASS" \
+  --repo_env=CODER_AGENT_URL="$CODER_AGENT_URL" \
+  --repo_env=CODER_AGENT_TOKEN="$CODER_AGENT_TOKEN" \
+  --repo_env=CARGO_BAZEL_REPIN=1 \
+  --repo_env=CARGO_BAZEL_REPIN_ONLY=crate_index'
 
 if command -v zoxide >/dev/null 2>&1; then
   if [ -n "${ZSH_VERSION:-}" ]; then
