@@ -34,6 +34,89 @@ alias bur='bazel fetch --repo=@crate_index \
   --repo_env=CARGO_BAZEL_REPIN=1 \
   --repo_env=CARGO_BAZEL_REPIN_ONLY=crate_index'
 
+# Restrict origin to useful branches and remove other cached remote-tracking refs.
+rgr() {
+  python3 - <<'PY'
+import subprocess
+
+
+def lines(*args):
+    return subprocess.run(
+        args,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.splitlines()
+
+
+subprocess.run(
+    ["git", "rev-parse", "--is-inside-work-tree"],
+    capture_output=True,
+    check=True,
+)
+
+upstream_refs = {
+    ref
+    for ref in lines(
+        "git", "for-each-ref", "--format=%(upstream)", "refs/heads"
+    )
+    if ref.startswith("refs/remotes/origin/")
+}
+upstream_branches = {
+    ref.removeprefix("refs/remotes/origin/") for ref in upstream_refs
+}
+available = {
+    line.split("\t", 1)[1].removeprefix("refs/heads/")
+    for line in lines("git", "ls-remote", "--heads", "origin")
+}
+extras = sorted(
+    branch
+    for branch in upstream_branches & available
+    if branch != "master" and not branch.startswith("tajp/")
+)
+
+subprocess.run(
+    [
+        "git", "remote", "set-branches", "origin",
+        "master", "tajp/*", *extras,
+    ],
+    check=True,
+)
+
+commands = ["start\n"]
+deleted = 0
+for line in lines(
+    "git", "for-each-ref",
+    "--format=%(refname)%09%(objectname)%09%(symref)",
+    "refs/remotes/origin",
+):
+    name, oid, symref = line.split("\t")
+    keep = (
+        name in {
+            "refs/remotes/origin/HEAD",
+            "refs/remotes/origin/master",
+        }
+        or name.startswith("refs/remotes/origin/tajp/")
+        or name in upstream_refs
+    )
+    if not keep:
+        if symref:
+            raise RuntimeError(f"Unexpected symbolic ref: {name}")
+        commands.append(f"delete {name} {oid}\n")
+        deleted += 1
+
+commands += ["prepare\n", "commit\n"]
+subprocess.run(
+    ["git", "update-ref", "--stdin", "--no-deref"],
+    input="".join(commands),
+    text=True,
+    check=True,
+)
+subprocess.run(["git", "fetch", "--dry-run", "origin"], check=True)
+print(f"rgr: removed {deleted} cached origin refs; dry-run fetch succeeded")
+PY
+}
+
 if command -v zoxide >/dev/null 2>&1; then
   if [ -n "${ZSH_VERSION:-}" ]; then
     eval "$(zoxide init zsh --cmd z)"
